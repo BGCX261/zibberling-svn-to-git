@@ -1,0 +1,150 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix kotg: <http://www.telekom.com/ns/kotg/>.
+@prefix kotw: <http://www.telekom.com/ns/kotw/>.
+@prefix scxml: <http://www.w3.org/2005/07/scxml/>.
+@prefix mmi: <http://www.w3.org/2008/04/mmi-arch/>.
+@prefix event: <http://purl.org/NET/c4dm/event.owl#>.
+@prefix time: <http://www.w3.org/2006/time#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix provenance: <http://www.w3.org/ns/prov#>.
+
+kotg: a owl:Ontology;
+	owl:imports kotw: ;
+	owl:imports scxml: ;
+	owl:imports mmi: ;
+	owl:imports provenance: .
+
+kotg:Experience a rdfs:Class.
+kotg:Room a rdfs:Class.
+
+kotg:Event a rdfs:Class;
+	rdfs:subClassOf event:Event.
+
+kotg:ExperienceEvent a rdfs:Class;
+	rdfs:subClassOf kotg:Event.
+
+kotg:TransitionTriggerEvent a rdfs:Class;
+	rdfs:subClassOf kotg:Event.
+
+# rooms with more than 3 healthcare professionals are rooms with healthcare professionals
+kotg:RoomsWithHealthCareProfessionals a rdfs:Class;
+	owl:equivalentClass [
+		a owl:Restriction;
+		owl:onProperty kotg:occupiedBy;
+		owl:minQualifiedCardinality "3"^^xsd:nonNegativeInteger;
+		owl:onClass kotw:HealthCareProfessional
+	].
+
+kotg:VoiceSynthesiserComponent a rdfs:Class;
+	rdfs:subClassOf mmi:ModalityComponent.
+
+kotg:VoiceInputComponent a rdfs:Class;
+	rdfs:subClassOf mmi:ModalityComponent.
+
+kotg:TouchScreenComponent a rdfs:Class.
+
+#Hi-res screen components have screen resolutions of greater than 1024 by 768
+kotg:HiResTouchScreenComponent a rdfs:Class;
+	owl:equivalentClass [
+		a owl:Class;
+		owl:intersectionOf ( 
+			[
+				a owl:Restriction;
+				owl:onProperty kotg:screenWidth;
+				owl:someValuesFrom [
+					a rdfs:Datatype;
+					owl:onDatatype xsd:integer;
+					owl:withRestrictions (
+						[
+							xsd:minInclusive 1024.
+						]
+					)
+				]
+			]
+			[
+				a owl:Restriction;
+				owl:onProperty kotg:screenHeight;
+				owl:someValuesFrom [
+					a rdfs:Datatype;
+					owl:onDatatype xsd:integer;
+					owl:withRestrictions (
+						[
+							xsd:minInclusive 768.
+						]
+					)
+
+				]
+			]
+			kotg:TouchScreenComponent
+		)	
+	].
+
+kotg:screenWidth a owl:DatatypeProperty;
+	rdfs:range xsd:integer.
+
+kotg:screenHeight a owl:DatatypeProperty;
+	rdfs:range xsd:integer.
+
+kotg:occupies a owl:ObjectProperty.
+
+kotg:occupiedBy a owl:ObjectProperty;
+	owl:inverseOf kotg:occupies.
+
+kotg:life-room a kotg:Room.
+
+kotg:life-room-projector a mmi:ModalityComponent;
+	scxml:hasState mmi:idle;
+	scxml:hasState mmi:paused;
+	scxml:hasState mmi:running.
+
+kotg:life-room-voice-input a mmi:ModalityComponent;
+	scxml:hasState mmi:idle;
+	scxml:hasState mmi:paused;
+	scxml:hasState mmi:running.
+
+kotg:life-experience a kotg:Experience;
+	scxml:hasState kotg:life-experience-idle;
+	scxml:hasState kotg:life-experience-start;
+	scxml:hasState kotg:life-experience-has-just-asked-a-question.
+
+# this is crufty and might break DL constraints
+kotg:life-experience-idle a scxml:State;
+	scxml:hasTransition [
+		scxml:event kotg:LifeExperienceStartEvent;
+		scxml:target kotg:life-experience-start
+	].
+
+kotg:life-experience-start a scxml:State;
+	scxml:hasOnEntry [
+		a scxml:ExecutionBlock;
+		scxml:raise [
+			scxml:event mmi:PrepareRequestEvent;
+			scxml:target kotg:life-room-projector
+		];
+		scxml:raise [
+			scxml:event mmi:PrepareRequestEvent;
+			scxml:target kotg:life-room-voice-input
+		]
+	].
+		
+
+# the life experience start event triggers when there 3 or more health care professionals in the Life Room 
+kotg:LifeExperienceStartEvent a rdfs:Class;
+	rdfs:subClassOf kotg:TransitionTriggerEvent;
+	owl:equivalentClass [
+		a owl:Restriction;
+		owl:onProperty mmi:data;
+		owl:someValuesFrom [
+			owl:intersectionOf (
+				kotw:Person
+				[			
+					a owl:Restriction;
+					owl:onProperty kotg:occupies;
+					owl:someValuesFrom kotg:RoomsWithHealthCareProfessionals
+				]
+			)
+		]
+	].
+

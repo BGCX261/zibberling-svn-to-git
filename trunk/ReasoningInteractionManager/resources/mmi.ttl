@@ -1,0 +1,48 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix kotg: <http://www.telekom.com/ns/kotg/>.
+@prefix kotw: <http://www.telekom.com/ns/kotw/>.
+@prefix scxml: <http://www.w3.org/2005/07/scxml/>.
+@prefix mmi: <http://www.w3.org/2008/04/mmi-arch/>.
+@prefix event: <http://purl.org/NET/c4dm/event.owl#>.
+@prefix time: <http://www.w3.org/2006/time#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix provenance: <http://www.w3.org/ns/prov#>.
+
+mmi: a owl:Ontology;
+	owl:imports event: ;
+	owl:imports provenance: .
+
+
+#These are the states for modality components as defined by the MMI recommendation
+
+mmi:Event a rdfs:Class;
+	rdfs:subClassOf event:Event.
+
+mmi:PreperareRequestEvent a rdfs:Class;
+	rdfs:subClassOf mmi:Event.
+
+mmi:StartRequestEvent a rdfs:Class;
+	rdfs:subClassOf mmi:Event.
+
+mmi:ModalityComponent a rdfs:Class.
+
+mmi:data a owl:ObjectProperty;
+	rdfs:domain mmi:Event;
+	owl:inverseOf provenance:qualifiedGeneration.
+
+mmi:source a owl:ObjectProperty;
+	rdfs:domain mmi:Event.
+
+mmi:target a owl:ObjectProperty;
+	rdfs:domain mmi:Event.
+
+#Individuals
+
+mmi:idle a mmi:State.
+mmi:paused a mmi:State.
+mmi:running a mmi:State.
+
+
+

@@ -1,0 +1,75 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix kotg: <http://www.telekom.com/ns/kotg/>.
+@prefix kotw: <http://www.telekom.com/ns/kotw/>.
+@prefix scxml: <http://www.w3.org/2005/07/scxml/>.
+@prefix mmi: <http://www.w3.org/2008/04/mmi-arch/>.
+@prefix event: <http://purl.org/NET/c4dm/event.owl#>.
+@prefix time: <http://www.w3.org/2006/time#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+
+<http://www.w3.org/2005/07/scxml/> a owl:Ontology. 
+
+scxml:State a rdfs:Class.
+
+scxml:ExectutionBlock a rdfs:Class.
+
+scxml:OnEntry a rdfs:Class;
+	rdfs:subClassOf scxml:ExecutionBlock.
+
+scxml:CurrentState a rdfs:Class;
+	rdfs:subClassOf scxml:State.
+
+scxml:Parallel a rdfs:Class;
+	rdfs:subClassOf scxml:State.
+
+scxml:Transition a rdfs:Class.
+
+scxml:TriggeredTransition a rdfs:Class;
+	rdfs:subClassOf scxml:Transition.
+
+scxml:Initial a rdfs:Class;
+	rdfs:subClassOf scxml:Transition.
+
+scxml:hasState a owl:ObjectProperty;
+	rdfs:range scxml:State.
+
+scxml:hasParallel a owl:ObjectProperty;
+	rdfs:subPropertyOf scxml:hasState.
+
+scxml:hasInitial a owl:ObjectProperty;
+	rdfs:subPropertyOf scxml:hasTransition.
+
+scxml:hasTransition a owl:ObjectProperty;
+	rdfs:domain scxml:State;
+	rdfs:range scxml:Transition.
+
+scxml:event a owl:ObjectProperty;
+	rdfs:range owl:Class.
+
+scxml:triggers a owl:ObjectProperty;
+	owl:inverseOf scxml:isTriggeredBy.
+
+scxml:isTriggeredBy a owl:ObjectProperty;
+	rdfs:domain scxml:Transition;
+	rdfs:range event:Event.
+
+scxml:target a owl:ObjectProperty;
+	rdfs:domain scxml:Transition;
+	rdfs:range scxml:State.
+
+scxml:isTargetOf a owl:ObjectProperty;
+	owl:inverseOf scxml:target.
+
+scxml:cond a owl:ObjectProperty;
+	rdfs:subPropertyOf scxml:triggeredBy;
+	rdfs:range scxml:Condition.
+
+scxml:target a owl:ObjectProperty;
+	rdfs:domain scxml:Transition;
+	rdfs:range scxml:State.
+
+scxml:hasOnEntry a owl:ObjectProperty;
+	rdfs:range scxml:OnEntry.
+

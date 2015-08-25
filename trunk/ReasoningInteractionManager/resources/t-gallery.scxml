@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<scxml xmlns="http://www.w3.org/2005/07/scxml"
+       version="1.0"
+       datamodel="ecmascript"
+       initial="oven"> 
+
+  	<!-- trivial 5 second microwave oven example -->
+  	<!-- using parallel and In() predicate -->
+  	<datamodel>
+    		<data id="cook_time" expr="5"/>
+    		<data id="door_closed" expr="true"/>
+    		<data id="timer" expr="0"/>
+  	</datamodel>
+
+  	<parallel id="t-gallery">
+	
+    		<!-- Rooms -->
+    		<parallel id="pre-show">
+
+		</parallel>
+
+		<parallel id="home">
+			
+		</parallel>
+
+		<parallel id="work">
+			
+		</parallel>
+
+		<parallel id="life">
+			<!-- Modality Components -->
+			<parallel id="life-projector">
+				<initial id="life-projector-idle" />
+				<state id="life-projector-idle">
+					<transition event="life-projector-welcome-experience-activation" target="life-projector-welcome-experience" />
+				</state>
+				<state id="life-projector-paused">
+					<transition event="life-projector-welcome-experience-activation" target="life-projector-welcome-experience" />
+				</state>
+				<state id="life-projector-running">
+					<transition event="life-projector-welcome-experience-activation" target="life-projector-welcome-experience" />
+				</state>
+			</parallel>
+				
+			<parallel id="life-voice-input">
+				<initial id="life-voice-input-idle" />
+				<state  id="life-voice-input-idle">
+				</state>
+				<state  id="life-voice-input-paused">
+				</state>
+				<state  id="life-voice-input-running">
+				</state>
+			</parallel>
+		</parallel>
+
+		
+		
+
+	</parallel>
+
+</scxml>
